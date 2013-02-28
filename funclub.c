@@ -99,6 +99,7 @@ struct Bucket *lookup(char const *key, size_t len) {
 	struct Bucket *bucket = table + index;
 
 	/* Quadratic probing */
+	/* FIXME: This code is broken */
 	for (size_t iter = 0; iter < 64; ++iter) {
 		/* Bucket empty? */
 		if (!bucket->len) {
