@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,7 +170,10 @@ void top() {
 	/* Print tokens */
 	for (size_t iter = 0; iter < sizeof topList / sizeof (struct Bucket *); ++iter) {
 		if (topList[iter])
-			printf("%*s: %lu\n", topList[iter]->len, topList[iter]->key, (unsigned long) topList[iter]->val);
+			printf("%*s: %" PRIu32 "\n",
+				topList[iter]->len,
+				topList[iter]->key,
+				topList[iter]->val);
 	}
 }
 
