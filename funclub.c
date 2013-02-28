@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -24,6 +25,8 @@ struct Bucket {
 static struct Bucket table[2097152 + 1] = { };
 
 static inline char lower(char chr) {
+	assert(chr > 'A' && chr < 'Z' || chr > 'a' && chr < 'z');
+
 	switch (chr) {
 	case 'A' ... 'Z':
 		return chr - ('A' - 'a');
@@ -84,6 +87,8 @@ uint32_t hash(char const *data, size_t len) {
 #define flip(integer) (((integer) % 2) ? -1 : 1)
 
 struct Bucket *lookup(char const *key, size_t len) {
+	assert(len <= sizeof table->key);
+
 	size_t index = hash(key, len) % (sizeof table / sizeof *table);
 	struct Bucket *bucket = table + index;
 
