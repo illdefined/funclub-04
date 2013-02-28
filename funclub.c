@@ -14,6 +14,7 @@
 /* mmap() */
 #include <sys/mman.h>
 
+/* Custom C macros */
 #include <defy/expect>
 #include <defy/nil>
 
@@ -123,7 +124,7 @@ struct Bucket *lookup(char const *key, size_t len) {
 }
 
 /* Parse input token and put it into hash table */
-void parseToken(char const *tok, size_t len) {
+static void parseToken(char const *tok, size_t len) {
 	if (unlikely(len) > sizeof (table->key)) {
 		fputs("Sorry…", stderr);
 		exit(EXIT_FAILURE);
@@ -146,7 +147,7 @@ void parseToken(char const *tok, size_t len) {
 }
 
 /* Determine the ten most common tokens */
-void top() {
+static void top() {
 	struct Bucket *topList[10] = { nil, nil, nil, nil, nil, nil, nil, nil, nil, nil };
 
 	for (size_t iter = 0; iter < sizeof table / sizeof *table; ++iter) {
