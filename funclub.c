@@ -16,14 +16,17 @@
 #include <defy/expect>
 #include <defy/nil>
 
+/* Hash table bucket structure */
 struct Bucket {
-	uint32_t val;
-	uint16_t len;
-	char key[128 - sizeof (uint32_t) - sizeof (uint16_t)];
+	uint32_t val; /**< Value (word count) */
+	uint16_t len; /**< Key length */
+	char key[128 - sizeof (uint32_t) - sizeof (uint16_t)]; /**< Key */
 };
 
+/* Hash table */
 static struct Bucket table[2097152 + 1] = { };
 
+/* Convert character to lower-case */
 static inline char lower(char chr) {
 	assert(chr > 'A' && chr < 'Z' || chr > 'a' && chr < 'z');
 
@@ -35,8 +38,10 @@ static inline char lower(char chr) {
 	}
 }
 
+/* Extract 32bit word from input */
 #define extract(data) ((((uint32_t) (data)[1]) << 8) + ((uint32_t) (data)[0]))
 
+/* Hash function (Google's super fast hash) */
 uint32_t hash(char const *data, size_t len) {
 	uint32_t hash = len;
 	uint32_t temp;
@@ -86,6 +91,7 @@ uint32_t hash(char const *data, size_t len) {
 
 #define flip(integer) (((integer) % 2) ? -1 : 1)
 
+/* Look up (possibly inserting) key in hash table */
 struct Bucket *lookup(char const *key, size_t len) {
 	assert(len <= sizeof table->key);
 
@@ -114,6 +120,7 @@ struct Bucket *lookup(char const *key, size_t len) {
 	return (struct Bucket *) 0;
 }
 
+/* Parse input token and put it into hash table */
 void parseToken(char const *tok, size_t len) {
 	if (unlikely(len) > sizeof (table->key)) {
 		fputs("Sorry…", stderr);
@@ -126,6 +133,7 @@ void parseToken(char const *tok, size_t len) {
 	for (size_t iter = 0; iter < len; ++iter)
 		lcs[iter] = lower(tok[iter]);
 
+	/* Insert into hash table */
 	struct Bucket *bucket = lookup(lcs, len);
 	if (unlikely(!bucket)) {
 		perror("lookup");
@@ -135,6 +143,7 @@ void parseToken(char const *tok, size_t len) {
 	bucket->val += 1;
 }
 
+/* Determine the ten most common tokens */
 void top() {
 	struct Bucket *topList[10] = { nil, nil, nil, nil, nil, nil, nil, nil, nil, nil };
 
@@ -156,6 +165,7 @@ void top() {
 		}
 	}
 
+	/* Print tokens */
 	for (size_t iter = 0; iter < sizeof topList / sizeof (struct Bucket *); ++iter) {
 		if (topList[iter])
 			printf("%*s: %lu\n", topList[iter]->len, topList[iter]->key, (unsigned long) topList[iter]->val);
