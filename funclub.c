@@ -44,7 +44,7 @@ static inline char lower(char chr) {
 #define extract(data) ((((uint32_t) (data)[1]) << 8) + ((uint32_t) (data)[0]))
 
 /* Hash function (Google's super fast hash) */
-uint32_t hash(char const *data, size_t len) {
+static uint32_t hash(char const *data, size_t len) {
 	uint32_t hash = len;
 	uint32_t temp;
 	size_t rem;
